@@ -46,19 +46,19 @@ net = net.to(device)
 print('loading pre-trined model...\n')
 resnet = models.resnet50()
 
-# pre-trained model:
-# https://download.pytorch.org/models/resnet50-19c8e357.pth
-resnet.load_state_dict(torch.load('./data/resnet50-0676ba61.pth'))
-new_state_dict = resnet.state_dict()
-op = net.state_dict()
-for k in new_state_dict.keys():
-    if k in op.keys() and not k.startswith('fc'):
-        op[k] = new_state_dict[k]
-net.load_state_dict(op)
-
 if args.resume:
     print('resume')
     net.load_state_dict(torch.load('result.model'))
+else:
+    # pre-trained model:
+    # https://download.pytorch.org/models/resnet50-19c8e357.pth
+    resnet.load_state_dict(torch.load('./data/resnet50-0676ba61.pth'))
+    new_state_dict = resnet.state_dict()
+    op = net.state_dict()
+    for k in new_state_dict.keys():
+        if k in op.keys() and not k.startswith('fc'):
+            op[k] = new_state_dict[k]
+    net.load_state_dict(op)
 
 criterion = YoloLoss(args.batch_size, args.bbxnumber, args.classnumber, lambda_coord=0.5, lambda_noobj=0.5)
 

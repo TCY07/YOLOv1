@@ -1,7 +1,7 @@
 import torch
 from torch.autograd import Variable
 import torch.nn as nn
-
+import argparse
 from resnet import resnet50
 import torchvision.transforms as transforms
 import cv2
@@ -160,12 +160,16 @@ def predict_gpu(model, image_name, root_path=''):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='PyTorch Yolov1 Predict')
+    parser.add_argument('--image_name', default='./data/VOCdevkit/VOC2007/JPEGImages/003251.jpg',
+                        type=str)
+
     model = resnet50()
     print('load model...')
     model.load_state_dict(torch.load('result.model'))
     model.eval()
     model.cuda()
-    image_name = './data/VOCdevkit/VOC2007/JPEGImages/003251.jpg'
+    image_name = parser.parse_args().image_name
     image = cv2.imread(image_name)
     print('predicting...')
     result = predict_gpu(model, image_name)
